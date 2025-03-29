@@ -1,0 +1,13 @@
+service cloud.firestore { // Firestore用のセキュリティルール（警備員を配置）
+  match /databases/{database}/documents { // データベース内の全ドキュメントが対象
+
+    match /messages/{messageId} { // messagesコレクション内の各メッセージ（1件）に対するルール
+
+      allow read: if true; // 全員に読み取りを許可（無条件）
+
+      allow write: if // 書き込み操作は、以下の条件を満たすときだけ許可
+        request.auth != null && // → ユーザーがログインしていて
+        request.auth.uid == request.resource.data.uid; // → 書こうとしてるデータのuidと一致してること
+    }
+  }
+}
